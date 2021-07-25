@@ -44,7 +44,7 @@ async def on_message(msg):
                     if len(entryList) == 2:
                         if emoji.emojize(":" + entryList[0] + ":",use_aliases=True) != ":" + entryList[0] + ":":
                             emojiList.append(entryList[0])
-                            answerList.append(entryList[1])
+                            answerList.append(entryList[1:])
                         else:
                             emojii = utils.get(msg.guild.emojis, name = entryList[0])
                             if emojii != None:
