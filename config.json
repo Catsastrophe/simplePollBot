@@ -1,0 +1,7 @@
+{
+    "Discord Token": "Your token",
+    "Command Prefix": "Command prefix of choice",
+    "channel": "id of the channel where you want the command to work",
+    "info on channel" : "The command has to be send in that channel, this is the same channel as where the poll will be send.",
+    "poll maker id": "id of the role you need to be able to use the command"
+}
