@@ -19,14 +19,6 @@ client.remove_command('help')
 async def on_ready():
     print("Bot ready", sys.version)
 
-
-@client.command()
-async def helpme(ctx):
-    embed=Embed(title="How do I use Polly?", description="Very simple :)! The command goes like this: `!pol <question> | <emoji name 1> <answer 1> | <emoji name 2> <answer 2> | ...` \nThe spaces before and after | are not needed. That's it!", color=0xad3998)
-    embed.set_author(name="Fesa", url="https://www.cubecraft.net/members/.224741/", icon_url=(await ctx.guild.query_members(user_ids=[474319793042751491]))[0].avatar_url)
-    embed.set_thumbnail(url=client.user.avatar_url)
-    await ctx.send(embed=embed)
-
 @client.event
 async def on_message(msg):
     if msg.author == client.user:
@@ -41,21 +33,17 @@ async def on_message(msg):
                 await msg.delete()
                 for entry in pollinfo[1:]:
                     entryList = entry.removeprefix(" ").removesuffix(" ").replace("  ", " ").split(' ')
-                    if 'a' == 'a':
-                        if emoji.emojize(":" + entryList[0] + ":",use_aliases=True) != ":" + entryList[0] + ":":
-                            emojiList.append(entryList[0])
-                            answerList.append(" ".join(entryList[1:]))
-                        else:
-                            emojii = utils.get(msg.guild.emojis, name = entryList[0])
-                            if emojii != None:
-                                    emojiList.append(emojii)
-                                    answerList.append(entryList[1])
-                            else:
-                                await (await msg.author.create_dm()).send(f"{entryList[0]} is not the name of an emoji. The poll will not be made.")
-                                raise BreakIt
+                    if emoji.emojize(":" + entryList[0] + ":",use_aliases=True) != ":" + entryList[0] + ":":
+                        emojiList.append(entryList[0])
+                        answerList.append(" ".join(entryList[1:]))
                     else:
-                        await (await msg.author.create_dm()).send(f"The command only accepts polls submitted like this: `!poll <question> | <emoji name 1> <answer 1> | <emoji name 2> <answer 2> | ..` \nThe spaces before and after `|` are not needed. ")
-                        raise BreakIt
+                        emojii = utils.get(msg.guild.emojis, name = entryList[0])
+                        if emojii != None:
+                                emojiList.append(emojii)
+                                answerList.append(entryList[1])
+                        else:
+                            await (await msg.author.create_dm()).send(f"{entryList[0]} is not the name of an emoji. The poll will not be made.")
+                            raise BreakIt
                 text = question + "\n"
                 for entry in emojiList:
                     try:
@@ -70,9 +58,17 @@ async def on_message(msg):
                         await polmsg.add_reaction(entry)
         except BreakIt:
                 pass
-        except:
-            await client.process_commands(msg)
-    
+    if msg.content.split(" ")[0] == "!helpme":
+        embed=Embed(title="How do I use Polly?", description="Very simple :)! The command goes like this: `!pol <question> | <emoji name 1> <answer 1> | <emoji name 2> <answer 2> | ...` \nThe spaces before and after | are not needed. That's it! \nYou can delete a poll by adding a ❌ to a poll! :)", color=0xad3998)
+        embed.set_author(name="Fesa", url="https://www.cubecraft.net/members/.224741/", icon_url=(await msg.guild.query_members(user_ids=[474319793042751491]))[0].avatar_url)
+        embed.set_thumbnail(url=client.user.avatar_url)
+        await msg.channel.send(embed=embed)
+
+
+@client.event
+async def on_reaction_add(rec, user):
+    if user.guild.get_role(poll_maker_id) in user.roles and str(rec) == '❌' and rec.message.author == client.user:
+        await rec.message.delete()
         
 try:
     client.run(token)
